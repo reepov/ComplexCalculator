@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+
 namespace dzpigareva
 {
     public partial class Form1 : Form
@@ -20,135 +21,6 @@ namespace dzpigareva
         bool nowExpTrig = false;
         bool nowAlg = false;
         bool[,,] operations = new bool[(int)Constants.countOperations, (int)Constants.countDigits, (int)Constants.countTypes];
-        class Complex
-        {
-            protected double _angle, _radius, _realpart, _imagepart;
-        }
-        class ComplexAlg : Complex
-        {
-            public static ComplexExpTrig ToComplexExpTrig(ComplexAlg value)
-            {
-                ComplexExpTrig digit = new ComplexExpTrig();
-                digit.Module = Math.Sqrt(Math.Pow(value.Re, 2) + Math.Pow(value.Im, 2));
-                if (value.Re != 0) digit.Angle = Math.Atan(value.Im / value.Re);
-                return digit;
-            }
-            public ComplexAlg()
-            {
-                _realpart = _imagepart = 1;
-            }
-            public ComplexAlg(double _realpart, double _imagepart)
-            {
-                this._realpart = _realpart;
-                this._imagepart = _imagepart;
-            }
-            public double Re { get => _realpart; set => _realpart = value; }
-            public double Im { get => _imagepart; set => _imagepart = value; }
-            public static string Print(ComplexAlg digit)
-            {
-                if (digit.Re == 0 && digit.Im != 0) return Convert.ToString(digit.Im) + " i";
-                else if (digit.Re == 0) return "0";
-                else if (digit.Im == 0) return Convert.ToString(digit.Re);
-                else if (digit.Im > 0) return digit.Re + " + " + digit.Im + " i";
-                else return digit.Re + " - " + Math.Abs(digit.Im) + " i";
-            }
-        }
-        class ComplexExpTrig : Complex
-        {
-            public static ComplexAlg ToComplexAlg(ComplexExpTrig value)
-            {
-                ComplexAlg digit = new ComplexAlg();
-                digit.Re = Math.Round(value.Module * Math.Cos(value.Angle));
-                digit.Im = Math.Round(value.Module * Math.Sin(value.Angle));
-                return digit;
-            }
-            public ComplexExpTrig()
-            {
-                _radius = 1;
-                _angle = 0;
-            }
-            public ComplexExpTrig(double _radius, double _angle)
-            {
-                this._radius = _radius;
-                this._angle = _angle;
-            }
-            public double Module
-            { get => _radius; set => _radius = value; }
-            public double Angle
-            { get => _angle; set => _angle = value; }
-            public static string PrintTrig(ComplexExpTrig digit)
-            {
-                if (digit.Module != 0)
-                {
-                    if (Math.Sin(digit.Angle) == 0) return digit.Module + "  cos (" + digit.Angle + ")";
-                    else if (Math.Cos(digit.Angle) == 0) return digit.Module + " i sin (" + digit.Angle + ")";
-                    else return digit.Module + " ( cos(" + digit.Angle + ") + i * sin(" + digit.Angle + "))";
-                }
-                else return "0";
-            }
-            public static string PrintExp(ComplexExpTrig digit)
-            {
-                if (digit.Module != 0)
-                {
-                    if (digit.Angle == 0) return Convert.ToString(digit.Module);
-                    else if (digit.Angle > 0) return digit.Module + " exp {i * " + digit.Angle + "}";
-                    else return digit.Module + " exp { - i * " + Math.Abs(digit.Angle) + "}";
-                }
-                else return "0";
-            }
-        }
-        class Calculator
-        {
-            public static ComplexAlg Summator(ComplexAlg digit_1, ComplexAlg digit_2)
-            {
-                ComplexAlg sum = new ComplexAlg();
-                sum.Re = digit_1.Re + digit_2.Re;
-                sum.Im = digit_1.Im + digit_2.Im;
-                return sum;
-            }
-            public static ComplexAlg Subtractor(ComplexAlg digit_1, ComplexAlg digit_2)
-            {
-                ComplexAlg subs = new ComplexAlg();
-                subs.Re = digit_1.Re - digit_2.Re;
-                subs.Im = digit_1.Im - digit_2.Im;
-                return subs;
-            }
-            public static ComplexAlg Multiplier(ComplexAlg digit1, ComplexAlg digit2)
-            {
-                ComplexAlg result = new ComplexAlg();
-                result.Re = digit1.Re * digit2.Re - digit1.Im * digit2.Im;
-                result.Im = digit1.Re * digit2.Im + digit1.Im * digit2.Re;
-                return result;
-            }
-            public static ComplexExpTrig Multiplier(ComplexExpTrig digit_1, ComplexExpTrig digit_2)
-            {
-                ComplexExpTrig result = new ComplexExpTrig();
-                result.Module = digit_1.Module * digit_2.Module;
-                result.Angle = digit_1.Angle + digit_2.Angle;
-                return result;
-            }
-            public static ComplexAlg Divider(ComplexAlg digit1, ComplexAlg digit2)
-            {
-                ComplexAlg result = new ComplexAlg();
-                result.Re = (digit1.Re * digit2.Re + digit1.Im * digit2.Im) / (Math.Pow(digit2.Re, 2) + Math.Pow(digit2.Im, 2));
-                result.Im = (digit2.Re * digit1.Im - digit2.Im * digit1.Re) / (Math.Pow(digit2.Re, 2) + Math.Pow(digit2.Im, 2));
-                return result;
-            }
-            public static ComplexExpTrig Divider(ComplexExpTrig digit_1, ComplexExpTrig digit_2)
-            {
-                ComplexExpTrig result = new ComplexExpTrig();
-                result.Module = digit_1.Module / digit_2.Module;
-                result.Angle = digit_1.Angle - digit_2.Angle;
-                return result;
-            }
-            public static ComplexExpTrig Powerer(ComplexExpTrig digit1, ComplexAlg digit2)
-            {
-                ComplexExpTrig result = new ComplexExpTrig();
-                result.Module = Math.Pow(digit1.Module, digit2.Re);
-                result.Angle = digit1.Angle * digit2.Re;
-                return result;
-            }
-        }
         public Form1()
         {
             InitializeComponent();
