@@ -37,9 +37,9 @@ namespace dzpigareva
         {
             if (digitsLimit > 8) { MessageBox.Show("Нельзя вводить более, чем 9 чисел в операцию"); return; }
             string digit;
-            bool firstdigit = text[0].Text != "" && text[1].Text != "" ? true : false;
-            bool seconddigit = text[2].Text != "" && text[3].Text != "" && text[4].Text != "" ? true : false;
-            bool thirddigit = text[5].Text != "" && text[6].Text != "" ? true : false;
+            bool firstdigit = text[0].Text != "" && text[1].Text != "";
+            bool seconddigit = text[2].Text != "" && text[3].Text != "" && text[4].Text != "";
+            bool thirddigit = text[5].Text != "" && text[6].Text != "";
             if (!(firstdigit || seconddigit || thirddigit)) { MessageBox.Show("Некорректно введённые данные"); return; }
             if (seconddigit && text[3].Text != text[4].Text) { MessageBox.Show("Угол фи должен быть одинаковый"); return; }
             for (int i = 0; i < 7; i++)
