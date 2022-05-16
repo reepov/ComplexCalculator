@@ -70,20 +70,20 @@ namespace dzpigareva
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Oswald", 21.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label1.Location = new System.Drawing.Point(129, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(382, 49);
+            this.label1.Size = new System.Drawing.Size(468, 33);
             this.label1.TabIndex = 0;
             this.label1.Text = "Калькулятор комплексных чисел";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Oswald", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label2.Location = new System.Drawing.Point(12, 92);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(221, 27);
+            this.label2.Size = new System.Drawing.Size(268, 20);
             this.label2.TabIndex = 1;
             this.label2.Text = "Алгебраическая форма (z = x + iy):";
             // 
@@ -114,10 +114,10 @@ namespace dzpigareva
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Oswald", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label4.Location = new System.Drawing.Point(12, 198);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(324, 27);
+            this.label4.Size = new System.Drawing.Size(392, 20);
             this.label4.TabIndex = 5;
             this.label4.Text = "Тригонометрическая форма (z = r(cos(a) + i*sin(a)) :";
             // 
@@ -137,7 +137,6 @@ namespace dzpigareva
             this.label5.Size = new System.Drawing.Size(57, 25);
             this.label5.TabIndex = 7;
             this.label5.Text = "(cos";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // label6
             // 
@@ -162,23 +161,22 @@ namespace dzpigareva
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Oswald", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label8.Location = new System.Drawing.Point(12, 302);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(243, 27);
+            this.label8.Size = new System.Drawing.Size(294, 20);
             this.label8.TabIndex = 12;
             this.label8.Text = "Экспоненциальная форма (z = r*e^ia):";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Oswald", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label9.Location = new System.Drawing.Point(114, 345);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(48, 27);
+            this.label9.Size = new System.Drawing.Size(46, 20);
             this.label9.TabIndex = 14;
             this.label9.Text = "* e ^ i";
-            this.label9.Click += new System.EventHandler(this.label9_Click);
             // 
             // textBox6
             // 
@@ -196,7 +194,7 @@ namespace dzpigareva
             // 
             // button1
             // 
-            this.button1.Font = new System.Drawing.Font("Oswald", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button1.Location = new System.Drawing.Point(17, 409);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(241, 43);
@@ -368,7 +366,6 @@ namespace dzpigareva
             this.label12.TabIndex = 34;
             this.label12.Text = "Примечание: калькулятор не поддерживает работу с \r\nвыражением, состоящим из более" +
     " чем 9 элементов";
-            this.label12.Click += new System.EventHandler(this.label12_Click);
             // 
             // textBox4
             // 

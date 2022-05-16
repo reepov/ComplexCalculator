@@ -61,7 +61,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Actions.cs" />
     <Compile Include="Classes\Calculator.cs" />
+    <Compile Include="Classes\Operations.cs" />
+    <Compile Include="Classes\EnterDigit.cs" />
     <Compile Include="Classes\Complex.cs" />
     <Compile Include="Classes\ComplexAlg.cs" />
     <Compile Include="Classes\ComplexExpTrig.cs" />

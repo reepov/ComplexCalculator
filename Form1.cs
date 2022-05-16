@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using dzpigareva.Classes;
 
 namespace dzpigareva
 {
@@ -35,484 +36,65 @@ namespace dzpigareva
         }
         private void button1_Click(object sender, EventArgs e) // ввести число в операцию
         {
-            if (digitsLimit > 8) { MessageBox.Show("Нельзя вводить более, чем 9 чисел в операцию"); return; }
-            string digit;
-            bool firstdigit = text[0].Text != "" && text[1].Text != "";
-            bool seconddigit = text[2].Text != "" && text[3].Text != "" && text[4].Text != "";
-            bool thirddigit = text[5].Text != "" && text[6].Text != "";
-            if (!(firstdigit || seconddigit || thirddigit)) { MessageBox.Show("Некорректно введённые данные"); return; }
-            if (seconddigit && text[3].Text != text[4].Text) { MessageBox.Show("Угол фи должен быть одинаковый"); return; }
-            for (int i = 0; i < 7; i++)
-            {
-                if ((firstdigit & i != 0 & i != 1 & text[i].Text != "") || (seconddigit & i != 2 & i != 3 & i != 4 & text[i].Text != "") || (thirddigit & i != 5 & i != 6 & text[i].Text != "")) 
-                { 
-                    MessageBox.Show("Введите только одно число"); 
-                    return; 
-                }
-            }
-            digit = "";
-            digitsLimit++;
-            if (firstdigit)
-            {
-                complexAlgDigits.Add(new ComplexAlg(double.Parse(text[0].Text), double.Parse(text[1].Text)));
-                complexExpTrigDigits.Add(null);
-                nowAlg = true; 
-                digit = $"({ComplexAlg.Print(complexAlgDigits[complexAlgDigits.Count - 1])})";
-                text[0].Clear(); text[1].Clear();
-            }
-            if (seconddigit)
-            {
-                complexExpTrigDigits.Add(new ComplexExpTrig(double.Parse(text[2].Text), double.Parse(text[3].Text)));
-                complexAlgDigits.Add(null);
-                nowExpTrig = true;
-                digit = $"({ComplexExpTrig.PrintTrig(complexExpTrigDigits[complexExpTrigDigits.Count - 1])})";
-                text[2].Clear(); text[3].Clear(); text[4].Clear();
-            }
-            if (thirddigit)
-            {
-                complexExpTrigDigits.Add(new ComplexExpTrig(double.Parse(text[5].Text), double.Parse(text[6].Text)));
-                complexAlgDigits.Add(null);
-                nowExpTrig = true;
-                digit = $"({ComplexExpTrig.PrintExp(complexExpTrigDigits[complexExpTrigDigits.Count - 1])})";   
-                text[5].Clear(); text[6].Clear();               
-            }
-            text[7].Text += digit;
-            for (int i = 0; i < (int)Constants.countDigits; i++)
-            {
-                buttons[i + 1].Enabled = true;
-                text[i].ReadOnly = true;
-                label10.Text = "Нажмите кнопку Рассчитать результат для получения \n результата операции или выберите нужную операцию";
-            }
-            buttons[0].Enabled = false;
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Число " + digit + " введено в калькулятор");
-            }
+            EnterDigit.EnterDigitsInOperation(ref digitsLimit, ref text, ref complexAlgDigits, ref complexExpTrigDigits, 
+                                              ref nowExpTrig, ref nowAlg, ref buttons, ref label10);
         }
         private void button2_Click(object sender, EventArgs e) // Сложение
         {
-            text[7].Text += " + ";
-            if (nowAlg) operations[0, digitsLimit - 1, 0] = true;
-            if (nowExpTrig) operations[0, digitsLimit - 1, 1] = true;
-            nowExpTrig = nowAlg = false;
-            for (int i = 0; i < (int)Constants.countDigits; i++)
-            {
-                buttons[i + 1].Enabled = false;
-                text[i].ReadOnly = false;
-                label10.Text = "Введите следующее число";
-                if (i == 0 || i == 1) text[i + 7].ReadOnly = true;
-            }
-            buttons[0].Enabled = true;
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал операцию сложения");
-            }
+            Operations.Summing(ref digitsLimit, ref text, ref nowExpTrig, ref nowAlg, ref buttons, ref operations, ref label10);
         }
         private void button3_Click(object sender, EventArgs e) // Вычитание
         {
-            text[7].Text += " - ";
-            if (nowAlg) operations[1, digitsLimit - 1, 0] = true;
-            if (nowExpTrig) operations[1, digitsLimit - 1, 1] = true;
-            nowExpTrig = nowAlg = false;
-            for (int i = 0; i < (int)Constants.countDigits; i++)
-            {
-                buttons[i + 1].Enabled = false;
-                text[i].ReadOnly = false;
-                label10.Text = "Введите следующее число";
-            }
-            text[7].ReadOnly = true;
-            text[8].ReadOnly = true;
-            buttons[0].Enabled = true;
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал операцию вычитания");
-            }
+            Operations.Substracting(ref digitsLimit, ref text, ref nowExpTrig, ref nowAlg, ref buttons, ref operations, ref label10);
         }
         private void button4_Click(object sender, EventArgs e) // Умножение
         {
-            text[7].Text += " * ";
-            if (nowAlg) operations[2, digitsLimit - 1, 0] = true;
-            if (nowExpTrig) operations[2, digitsLimit - 1, 1] = true;
-            nowExpTrig = nowAlg = false;
-            for (int i = 0; i < (int)Constants.countDigits; i++)
-            {
-                buttons[i + 1].Enabled = false;
-                text[i].ReadOnly = false;
-                label10.Text = "Введите следующее число";
-            }
-            buttons[0].Enabled = true;
-            text[7].ReadOnly = true;
-            text[8].ReadOnly = true;
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал операцию умножения");
-            }
+            Operations.Multiplying(ref digitsLimit, ref text, ref nowExpTrig, ref nowAlg, ref buttons, ref operations, ref label10);
         }
         private void button5_Click(object sender, EventArgs e) // Деление
         {
-            text[7].Text += " / ";
-            if (nowAlg) operations[3, digitsLimit - 1, 0] = true;
-            if (nowExpTrig) operations[3, digitsLimit - 1, 1] = true;
-            nowExpTrig = nowAlg = false;
-            for (int i = 0; i < (int)Constants.countDigits; i++)
-            {
-                buttons[i + 1].Enabled = false;
-                text[i].ReadOnly = false;
-                label10.Text = "Введите следующее число";
-            }
-            text[7].ReadOnly = true;
-            text[8].ReadOnly = true;
-            buttons[0].Enabled = true;
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал операцию деления");
-            }
+            Operations.Dividing(ref digitsLimit, ref text, ref nowExpTrig, ref nowAlg, ref buttons, ref operations, ref label10);
         }
         private void button6_Click(object sender, EventArgs e) // Возведение в целую степень
         {
-            text[7].Text += " ^ ";
-            if (nowAlg) operations[4, digitsLimit - 1, 0] = true;
-            if (nowExpTrig) operations[4, digitsLimit - 1, 1] = true;
-            nowExpTrig = nowAlg = false;
-            for (int i = 0; i < (int)Constants.countDigits; i++)
-            {
-                buttons[i + 1].Enabled = false;
-                text[i].ReadOnly = false;
-                label10.Text = "Введите целую степень как алгебраическое комплексное \n число с нулевой комплексной частью";
-            }
-            text[7].ReadOnly = true;
-            text[8].ReadOnly = true;
-            buttons[0].Enabled = true;
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал операцию возведения в целую степень");
-            }
+            Operations.IntPowering(ref digitsLimit, ref text, ref nowExpTrig, ref nowAlg, ref buttons, ref operations, ref label10);
         }
         private void button7_Click(object sender, EventArgs e) // Преобразование в алгебраическую форму
         {
-            if (digitsLimit > 1)
-            {
-                MessageBox.Show("Для перевода числа в другую форму требуется лишь одно введённое число");
-                return;
-            }
-            text[7].Text = text[8].Text = complexAlgDigits[0] != null ? ComplexAlg.Print(complexAlgDigits[0]) : ComplexAlg.Print(ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[0]));
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал операцию преобразования числа в алгебраическую форму");
-                protocol.WriteLine("Результат: {0}", text[8].Text);
-            }
+            Operations.AlgForm(ref digitsLimit, ref text, ref complexAlgDigits, ref complexExpTrigDigits);
         }
         private void button8_Click(object sender, EventArgs e) // Преобразование в тригонометрическую форму
         {
-            if (digitsLimit > 1)
-            {
-                MessageBox.Show("Для перевода числа в другую форму требуется лишь одно введённое число");
-                return;
-            }
-            text[7].Text = text[8].Text = complexAlgDigits[0] != null ? ComplexExpTrig.PrintTrig(ComplexAlg.ToComplexExpTrig(complexAlgDigits[0])) : ComplexExpTrig.PrintTrig(complexExpTrigDigits[0]);
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал операцию преобразования числа в тригонометрическую форму");
-                protocol.WriteLine("Результат: {0}", text[8].Text);
-            }
+            Operations.TrigForm(ref digitsLimit, ref text, ref complexAlgDigits, ref complexExpTrigDigits);
         }
         private void button9_Click(object sender, EventArgs e) // Преобразование в экспоненциальную форму
         {
-            if (digitsLimit > 1)
-            {
-                MessageBox.Show("Для перевода числа в другую форму требуется лишь одно введённое число");
-            }
-            text[7].Text = text[8].Text = complexAlgDigits[0] != null ? ComplexExpTrig.PrintExp(ComplexAlg.ToComplexExpTrig(complexAlgDigits[0])) : ComplexExpTrig.PrintExp(complexExpTrigDigits[0]);
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал операцию преобразования числа в экспоненциальную форму");
-                protocol.WriteLine("Результат: {0}", text[8].Text);
-            }
+            Operations.ExpForm(ref digitsLimit, ref text, ref complexAlgDigits, ref complexExpTrigDigits);
         }
         private void button10_Click(object sender, EventArgs e) // Очистить калькулятор
         {
-            label10.Text = "ЖУРНАЛ АКТИВНЫХ ДЕЙСТВИЙ РАБОТЫ КАЛЬКУЛЯТОРА";
-            complexAlgDigits.Clear();
-            complexExpTrigDigits.Clear();
-            foreach (TextBox text in text)
-            {
-                text.Clear();
-            }
-            digitsLimit = 0;
-            nowAlg = false;
-            nowExpTrig = false;
-            for (int i = 0; i < (int)Constants.countOperations; i++)
-            {
-                for (int j = 0; j < (int)Constants.countDigits; j++)
-                {
-                    operations[i, j, 0] = false;
-                    operations[i, j, 1] = false;
-                }
-            }
-            for (int i = 1; i < (int)Constants.countDigits + 1; i++)
-            {
-                buttons[i].Enabled = false;
-                text[i - 1].ReadOnly = false;
-                if (i == 7 || i == 8) text[i].ReadOnly = true;
-            }
-            buttons[0].Enabled = true;
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь очистил калькулятор.");
-            }
+            Actions.Clear(ref complexAlgDigits, ref complexExpTrigDigits, ref label10, ref text, 
+                          ref operations, ref digitsLimit, ref nowAlg, ref nowExpTrig, ref buttons);
         }
-        void Count(int op, int i, int type, int counttype)
-        {
-            switch (op)
-            {
-                case 4:
-                    ComplexExpTrig _digit = type == 0 ? ComplexAlg.ToComplexExpTrig(complexAlgDigits[i]) : complexExpTrigDigits[i];
-                    ComplexExpTrig power = Calculator.Powerer(_digit, complexAlgDigits[i + 1]);
-                    complexAlgDigits[i + 1] = null;
-                    if (type == 0 && (counttype == 2 || counttype == 3)) complexAlgDigits[i] = null;
-                    if (type == 0 && counttype == 1) complexAlgDigits[i] = ComplexExpTrig.ToComplexAlg(power);
-                    if (type == 1 || counttype == 2 || counttype == 3) complexExpTrigDigits[i] = power;
-                    ComplexAlg digit = ComplexExpTrig.ToComplexAlg(power);
-                    complexAlgDigits.RemoveAt(i + 1);
-                    complexExpTrigDigits.RemoveAt(i + 1);
-                    if (i == digitsLimit - 2)
-                    {
-                        if (counttype == 1) text[7].Text = text[8].Text = ComplexAlg.Print(digit);
-                        if (counttype == 2) text[7].Text = text[8].Text = ComplexExpTrig.PrintTrig(power);
-                        if (counttype == 3) text[7].Text = text[8].Text = ComplexExpTrig.PrintExp(power);
-                        digitsLimit = 1;
-                        for (int r = 0; r < (int)Constants.countOperations; r++)
-                        {
-                            for (int j = 0; j < (int)Constants.countDigits; j++)
-                            {
-                                operations[r, j, 0] = false;
-                                operations[r, j, 1] = false;
-                            }
-                        }
-                    }
-                    break;
-                case 0:
-                    ComplexAlg summa = new ComplexAlg();
-                    if (type == 0) summa = complexAlgDigits[i + 1] != null ? Calculator.Summator(complexAlgDigits[i], complexAlgDigits[i + 1]) 
-                                         : Calculator.Summator(complexAlgDigits[i], ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i + 1]));
-                    if (type == 1) summa = complexAlgDigits[i + 1] != null ? Calculator.Summator(ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i]), complexAlgDigits[i + 1])
-                                         : Calculator.Summator(ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i]), ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i + 1]));
-                    complexAlgDigits[i] = summa;
-                    complexAlgDigits.RemoveAt(i + 1);
-                    complexExpTrigDigits.RemoveAt(i + 1);
-                    if (i == digitsLimit - 2)
-                    {
-                        if (counttype == 1) text[7].Text = text[8].Text = ComplexAlg.Print(summa);
-                        if (counttype == 2) text[7].Text = text[8].Text = ComplexExpTrig.PrintTrig(ComplexAlg.ToComplexExpTrig(summa));
-                        if (counttype == 3) text[7].Text = text[8].Text = ComplexExpTrig.PrintExp(ComplexAlg.ToComplexExpTrig(summa));
-                        digitsLimit = 1;
-                        for (int r = 0; r < (int)Constants.countOperations; r++)
-                        {
-                            for (int j = 0; j < (int)Constants.countDigits; j++)
-                            {
-                                operations[r, j, 0] = false;
-                                operations[r, j, 1] = false;
-                            }
-                        }
-                    }
-                    break;
-                case 2:
-                    ComplexAlg multiplyAlg = new ComplexAlg();
-                    ComplexExpTrig multiplyExpTrig = new ComplexExpTrig();
-                    if (type == 0)
-                    {
-                        multiplyAlg = complexAlgDigits[i + 1] != null ? Calculator.Multiplier(complexAlgDigits[i], complexAlgDigits[i + 1])
-                                : Calculator.Multiplier(complexAlgDigits[i], ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i + 1]));
-                        complexAlgDigits[i] = multiplyAlg;
-                    }
-                    if (type == 1)
-                    {
-                        multiplyExpTrig = complexAlgDigits[i + 1] == null ? Calculator.Multiplier(complexExpTrigDigits[i], complexExpTrigDigits[i + 1])
-                                        : Calculator.Multiplier(complexExpTrigDigits[i], ComplexAlg.ToComplexExpTrig(complexAlgDigits[i + 1]));
-                        complexExpTrigDigits[i] = multiplyExpTrig;
-                    }
-                    complexAlgDigits.RemoveAt(i + 1);
-                    complexExpTrigDigits.RemoveAt(i + 1);
-                    if (i == digitsLimit - 2)
-                    {
-                        if (counttype == 1) text[7].Text = text[8].Text = type == 0 ? ComplexAlg.Print(multiplyAlg) : ComplexAlg.Print(ComplexExpTrig.ToComplexAlg(multiplyExpTrig));
-                        if (counttype == 2) text[7].Text = text[8].Text = type == 0 ? ComplexExpTrig.PrintTrig(ComplexAlg.ToComplexExpTrig(multiplyAlg)) : ComplexExpTrig.PrintTrig(multiplyExpTrig);
-                        if (counttype == 3) text[7].Text = text[8].Text = type == 0 ? ComplexExpTrig.PrintExp(ComplexAlg.ToComplexExpTrig(multiplyAlg)) : ComplexExpTrig.PrintExp(multiplyExpTrig);
-                        digitsLimit = 1;
-                        for (int r = 0; r < (int)Constants.countOperations; r++)
-                        {
-                            for (int j = 0; j < (int)Constants.countDigits; j++)
-                            {
-                                operations[r, j, 0] = false;
-                                operations[r, j, 1] = false;
-                            }
-                        }
-                    }
-                    break;
-                case 1:
-                    ComplexAlg subtract = new ComplexAlg();
-                    if (type == 0) subtract = complexAlgDigits[i + 1] != null ? Calculator.Subtractor(complexAlgDigits[i], complexAlgDigits[i + 1])
-                                            : Calculator.Subtractor(complexAlgDigits[i], ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i + 1]));
-                    if (type == 1) subtract = complexAlgDigits[i + 1] != null ? Calculator.Subtractor(ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i]), complexAlgDigits[i + 1])
-                                            : Calculator.Subtractor(ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i]), ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i + 1]));
-                    complexAlgDigits[i] = subtract;
-                    complexAlgDigits.RemoveAt(i + 1);
-                    complexExpTrigDigits.RemoveAt(i + 1);
-                    if (i == digitsLimit - 2)
-                    {
-                        if (counttype == 1) text[7].Text = text[8].Text = ComplexAlg.Print(subtract);
-                        if (counttype == 2) text[7].Text = text[8].Text = ComplexExpTrig.PrintTrig(ComplexAlg.ToComplexExpTrig(subtract));
-                        if (counttype == 3) text[7].Text = text[8].Text = ComplexExpTrig.PrintExp(ComplexAlg.ToComplexExpTrig(subtract));
-                        digitsLimit = 1;
-                        for (int r = 0; r < (int)Constants.countOperations; r++)
-                        {
-                            for (int j = 0; j < (int)Constants.countDigits; j++)
-                            {
-                                operations[r, j, 0] = false;
-                                operations[r, j, 1] = false;
-                            }
-                        }
-                    }
-                    break;
-                case 3:
-                    ComplexAlg divideAlg = new ComplexAlg();
-                    ComplexExpTrig divideExpTrig = new ComplexExpTrig();
-                    if (type == 0)
-                    {
-                        divideAlg = complexAlgDigits[i + 1] != null ? Calculator.Divider(complexAlgDigits[i], complexAlgDigits[i + 1])
-                                  : Calculator.Divider(complexAlgDigits[i], ComplexExpTrig.ToComplexAlg(complexExpTrigDigits[i + 1]));
-                        complexAlgDigits[i] = divideAlg;
-                    }
-                    if (type == 1)
-                    {
-                        divideExpTrig = complexAlgDigits[i + 1] == null ? Calculator.Divider(complexExpTrigDigits[i], complexExpTrigDigits[i + 1])
-                                      : Calculator.Divider(complexExpTrigDigits[i], ComplexAlg.ToComplexExpTrig(complexAlgDigits[i + 1]));
-                        complexExpTrigDigits[i] = divideExpTrig;
-                    }
-                    complexAlgDigits.RemoveAt(i + 1);
-                    complexExpTrigDigits.RemoveAt(i + 1);
-                    if (i == digitsLimit - 2)
-                    {
-                        if (counttype == 1) text[7].Text = text[8].Text = type == 0 ? ComplexAlg.Print(divideAlg) : ComplexAlg.Print(ComplexExpTrig.ToComplexAlg(divideExpTrig));
-                        if (counttype == 2) text[7].Text = text[8].Text = type == 0 ? ComplexExpTrig.PrintTrig(ComplexAlg.ToComplexExpTrig(divideAlg)) : ComplexExpTrig.PrintTrig(divideExpTrig);
-                        if (counttype == 3) text[7].Text = text[8].Text = type == 0 ? ComplexExpTrig.PrintExp(ComplexAlg.ToComplexExpTrig(divideAlg)) : ComplexExpTrig.PrintExp(divideExpTrig);
-                        digitsLimit = 1;
-                        for (int r = 0; r < (int)Constants.countOperations; r++)
-                        {
-                            for (int j = 0; j < (int)Constants.countDigits; j++)
-                            {
-                                operations[r, j, 0] = false;
-                                operations[r, j, 1] = false;
-                            }
-                        }
-                    }
-                    break;
-            }
-        } // Метод для рассчетов
         private void button11_Click(object sender, EventArgs e) // рассчитать результат в алгебраической форме
         {
-            if (digitsLimit < 2)
-            {
-                MessageBox.Show("Недостаточно чисел для проведения рассчётов");
-                using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-                {
-                    protocol.WriteLine("Пользователь ввёл недостаточное количество чисел для совершения вычислений");
-                }
-                return;
-            }
-            label10.Text = "ЖУРНАЛ АКТИВНЫХ ДЕЙСТВИЙ РАБОТЫ КАЛЬКУЛЯТОРА";
-            for (int i = 0; i < digitsLimit - 1; i++)
-            {
-                if (operations[4, i, 0]) Count(4, i, 0, 1);
-                if (operations[4, i, 1]) Count(4, i, 1, 1);
-                if (operations[2, i, 0]) Count(2, i, 0, 1);
-                if (operations[2, i, 1]) Count(2, i, 1, 1);
-                if (operations[3, i, 0]) Count(3, i, 0, 1);
-                if (operations[3, i, 1]) Count(3, i, 1, 1);
-                if (operations[0, i, 0]) Count(0, i, 0, 1);
-                if (operations[0, i, 1]) Count(0, i, 1, 1);
-                if (operations[1, i, 0]) Count(1, i, 0, 1);
-                if (operations[1, i, 1]) Count(1, i, 1, 1);
-            }
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал расчёты в алгебраической форме");
-                protocol.WriteLine("Результат: {0}", text[8].Text);
-            }
+            Actions.CountInAlgForm(ref digitsLimit, ref label10, ref operations, ref text, ref complexAlgDigits, ref complexExpTrigDigits);
         }   
         private void button12_Click(object sender, EventArgs e) // рассчитать в тригонометрической форме
         {
-            if (digitsLimit < 2)
-            {
-                MessageBox.Show("Недостаточно чисел для проведения рассчётов");
-                return;
-            }
-            label10.Text = "ЖУРНАЛ АКТИВНЫХ ДЕЙСТВИЙ РАБОТЫ КАЛЬКУЛЯТОРА";
-            for (int i = 0; i < digitsLimit - 1; i++)
-            {
-                if (operations[4, i, 0]) Count(4, i, 0, 2);
-                if (operations[4, i, 1]) Count(4, i, 1, 2);
-                if (operations[2, i, 0]) Count(2, i, 0, 2);
-                if (operations[2, i, 1]) Count(2, i, 1, 2);
-                if (operations[3, i, 0]) Count(3, i, 0, 2);
-                if (operations[3, i, 1]) Count(3, i, 1, 2);
-                if (operations[0, i, 0]) Count(0, i, 0, 2);
-                if (operations[0, i, 1]) Count(0, i, 1, 2);
-                if (operations[1, i, 0]) Count(1, i, 0, 2);
-                if (operations[1, i, 1]) Count(1, i, 1, 2);
-            }
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал расчёты в тригонометрической форме");
-                protocol.WriteLine("Результат: {0}", text[8].Text);
-            }
+            Actions.CountInTrigForm(ref digitsLimit, ref label10, ref operations, ref text, ref complexAlgDigits, ref complexExpTrigDigits);
         }
         private void button13_Click(object sender, EventArgs e) // рассчитать в экспоненциональной форме
         {
-            if (digitsLimit < 2)
-            {
-                MessageBox.Show("Недостаточно чисел для проведения рассчётов");
-                return;
-            }
-            label10.Text = "ЖУРНАЛ АКТИВНЫХ ДЕЙСТВИЙ РАБОТЫ КАЛЬКУЛЯТОРА";
-            for (int i = 0; i < digitsLimit - 1; i++)
-            {
-                if (operations[4, i, 0]) Count(4, i, 0, 3);
-                if (operations[4, i, 1]) Count(4, i, 1, 3);
-                if (operations[2, i, 0]) Count(2, i, 0, 3);
-                if (operations[2, i, 1]) Count(2, i, 1, 3);
-                if (operations[3, i, 0]) Count(3, i, 0, 3);
-                if (operations[3, i, 1]) Count(3, i, 1, 3);
-                if (operations[0, i, 0]) Count(0, i, 0, 3);
-                if (operations[0, i, 1]) Count(0, i, 1, 3);
-                if (operations[1, i, 0]) Count(1, i, 0, 3);
-                if (operations[1, i, 1]) Count(1, i, 1, 3);
-            }
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", true, Encoding.GetEncoding(1251)))
-            {
-                protocol.WriteLine("Пользователь выбрал расчёты в экспоненциональной форме");
-                protocol.WriteLine("Результат: {0}", text[8].Text);
-            }
+            Actions.CountInExpForm(ref digitsLimit, ref label10, ref operations, ref text, ref complexAlgDigits, ref complexExpTrigDigits);
         }
-        private void label12_Click(object sender, EventArgs e)
+        private void button14_Click(object sender, EventArgs e)
         {
-
+            Process.Start("protocol.txt");
         }
-        private void label5_Click(object sender, EventArgs e)
+        private void button15_Click(object sender, EventArgs e) // очистить протокол
         {
-
+            Actions.ProtocolClean();
         }
-        private void label9_Click(object sender, EventArgs e)
-        {
-
-        }
-        private void button14_Click(object sender, EventArgs e) => Process.Start("protocol.txt");
-        private void button15_Click(object sender, EventArgs e)
-        {
-            using (StreamWriter protocol = new StreamWriter("protocol.txt", false, Encoding.GetEncoding(1251)))
-            {
-                protocol.Write("");
-            }
-        } // очистить протокол
     }
 }
