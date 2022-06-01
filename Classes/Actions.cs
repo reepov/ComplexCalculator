@@ -11,7 +11,8 @@ namespace dzpigareva.Classes
 {
     public class Actions
     {
-        public static void Clear(ref List<ComplexAlg> complexAlgDigits, ref List<ComplexExpTrig> complexExpTrigDigits, ref Label label10, ref TextBox[] text, ref bool [,,] operations, ref int digitsLimit, ref bool nowAlg, ref bool nowExpTrig, ref Button[] buttons)
+        public static void Clear(ref List<ComplexAlg> complexAlgDigits, ref List<ComplexExpTrig> complexExpTrigDigits, ref Label label10, ref TextBox[] text, 
+                                 ref bool [,,] operations, ref int digitsLimit, ref bool nowAlg, ref bool nowExpTrig, ref Button[] buttons)
         {
             label10.Text = "ЖУРНАЛ АКТИВНЫХ ДЕЙСТВИЙ РАБОТЫ КАЛЬКУЛЯТОРА";
             complexAlgDigits.Clear();
@@ -43,7 +44,8 @@ namespace dzpigareva.Classes
                 protocol.WriteLine("Пользователь очистил калькулятор.");
             }
         }
-        public static void Count(int op, int i, int type, int counttype, ref List<ComplexAlg> complexAlgDigits, ref List<ComplexExpTrig> complexExpTrigDigits, ref int digitsLimit, ref TextBox[] text, ref bool[,,] operations)
+        public static void Count(int op, int i, int type, int counttype, ref List<ComplexAlg> complexAlgDigits, ref List<ComplexExpTrig> complexExpTrigDigits,
+                                 ref int digitsLimit, ref TextBox[] text, ref bool[,,] operations)
         {
             switch (op)
             {
@@ -191,7 +193,8 @@ namespace dzpigareva.Classes
                     break;
             }
         } // Метод для рассчетов
-        public static void CountInAlgForm(ref int digitsLimit, ref Label label10, ref bool [,,] operations, ref TextBox[] text, ref List<ComplexAlg> complexAlgDigits, ref List<ComplexExpTrig> complexExpTrigDigits)
+        public static void CountInAlgForm(ref int digitsLimit, ref Label label10, ref bool [,,] operations, ref TextBox[] text, 
+                                          ref List<ComplexAlg> complexAlgDigits, ref List<ComplexExpTrig> complexExpTrigDigits)
         {
             if (digitsLimit < 2)
             {
